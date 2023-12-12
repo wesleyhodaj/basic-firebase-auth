@@ -8,12 +8,13 @@ import {useNavigation} from '@react-navigation/native';
 
 function AuthContent({isLogin = false, onAuthenticate}) {
   const navigation = useNavigation();
-  const [credentialsInvalid, setCredentialsInvalid] = useState({
-    email: false,
-    password: false,
-    confirmEmail: false,
-    confirmPassword: false,
-  });
+
+  // const [credentialsInvalid, setCredentialsInvalid] = useState({
+  //   email: false,
+  //   password: false,
+  //   confirmEmail: false,
+  //   confirmPassword: false,
+  // });
 
   function switchAuthModeHandler() {
     if (isLogin) {
@@ -34,7 +35,7 @@ function AuthContent({isLogin = false, onAuthenticate}) {
         <Text style={[styles.text, styles.textTitle]}>WELCOME</Text>
         <Text style={styles.text}>
           {isLogin
-            ? '  Before enjoying the app services Please register'
+            ? ' Before enjoying the app services Please register'
             : ' For enjoying the app services please Log in '}
         </Text>
       </View>

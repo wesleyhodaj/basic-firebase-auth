@@ -1,22 +1,35 @@
-import {View, ActivityIndicator, StyleSheet} from 'react-native';
-import {GlobalStyles} from '../../constants/styles';
+import {View, ActivityIndicator, StyleSheet, Modal} from 'react-native';
 
-function LoadingOverlay(params) {
+function LoadingOverlay({isVisible}) {
+  console.log(`loading overlay ${isVisible}`);
   return (
-    <View style={style.container}>
-      <ActivityIndicator size="large" color="white" />
-    </View>
+    <Modal visible={isVisible} transparent={true}>
+      <View style={styles.modalBackground}>
+        <View style={styles.activityIndicatorWrapper}>
+          <ActivityIndicator size="large" color="white" />
+        </View>
+      </View>
+    </Modal>
   );
 }
 
 export default LoadingOverlay;
 
-const style = StyleSheet.create({
-  container: {
+const styles = StyleSheet.create({
+  modalBackground: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
-    backgroundColor: GlobalStyles.colors.primary700,
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    backgroundColor: '#00000040',
+  },
+  activityIndicatorWrapper: {
+    backgroundColor: 'transparent',
+    height: 100,
+    width: 100,
+    borderRadius: 10,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-around',
   },
 });

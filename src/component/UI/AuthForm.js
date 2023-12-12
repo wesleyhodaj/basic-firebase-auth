@@ -1,9 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Alert, StyleSheet, View} from 'react-native';
 
 import Button from './Button';
 import Input from './LoginInput';
 import {GlobalStyles} from '../../constants/styles';
+import {createUser, login} from '../../util/httpUtil';
+import LoadingOverlay from '../../component/UI/LoadingOverlay';
+import {useDispatch} from 'react-redux';
+import {Login} from '../../store/actions';
+import {useLoading} from '../../context/loading-overlay-context';
 
 function AuthForm({isLogin, onAuthenticate}) {
   const [inputs, setInputs] = React.useState({
@@ -18,23 +23,9 @@ function AuthForm({isLogin, onAuthenticate}) {
     passwordError: false,
     confirmPasswordError: false,
   });
+  const {loading, setLoading} = useLoading();
 
-  // function updateInputValueHandler(inputType, enteredValue) {
-  //   switch (inputType) {
-  //     case 'email':
-  //       setEnteredEmail(enteredValue);
-  //       break;
-  //     case 'confirmEmail':
-  //       setEnteredConfirmEmail(enteredValue);
-  //       break;
-  //     case 'password':
-  //       setEnteredPassword(enteredValue);
-  //       break;
-  //     case 'confirmPassword':
-  //       setEnteredConfirmPassword(enteredValue);
-  //       break;
-  //   }
-  // }
+  const dispatch = useDispatch();
 
   const handleOnChange = (input, errorInput, text) => {
     let isValid;
@@ -115,9 +106,21 @@ function AuthForm({isLogin, onAuthenticate}) {
       errors.confirmPasswordError ||
       inputs.email === ''
     )
-      return;
+      return Alert.alert('Attention!', 'Please fill all the fields.');
 
-    onAuthenticate({email: inputs.email, password: inputs.password});
+    // onAuthenticate({email: inputs.email, password: inputs.password});
+    signUpHandler({email: inputs.email, password: inputs.password});
+  }
+  async function signUpHandler({email, password}) {
+    setLoading(true);
+    const token = await login(email, password);
+    console.log(email, password);
+    if (token != null) {
+      dispatch(Login(token));
+    } else {
+      Alert.alert('Error login', 'Please check your entered credentials.');
+    }
+    setLoading(false);
   }
 
   return (
@@ -126,7 +129,6 @@ function AuthForm({isLogin, onAuthenticate}) {
         <Input
           label="Email Address"
           keyboardType="email-address"
-          // onUpdateValue={updateInputValueHandler.bind(this, 'email')}
           onUpdateValue={text => handleOnChange('email', 'emailError', text)}
           value={inputs.email}
           isInvalid={errors.emailError}

@@ -13,6 +13,11 @@ import LoginScreen from './src/screens/login/LoginScreen';
 import {store} from './src/store';
 import {Provider, useDispatch, useSelector} from 'react-redux';
 import {Init} from './src/store/actions';
+import {
+  LoadingOverlayContextProvider,
+  useLoading,
+} from './src/context/loading-overlay-context';
+import LoadingOverlay from './src/component/UI/LoadingOverlay';
 const Stack = createNativeStackNavigator();
 
 const LoginStack = () => {
@@ -62,7 +67,7 @@ const AuthStack = () => {
 
 const RootNavigation = () => {
   console.log('Appjs', token);
-  const [loading, setLoading] = useState(true);
+  const {loading, setLoading} = useLoading();
 
   const dispatch = useDispatch();
 
@@ -77,16 +82,11 @@ const RootNavigation = () => {
   }, []);
 
   const token = useSelector(state => state.Reducers.authToken);
-  if (loading) {
-    return (
-      <View style={{flex: 1, justifyContent: 'center'}}>
-        <ActivityIndicator size="large" color={Colors.primary} />
-      </View>
-    );
-  }
+  // if (loading) return <LoadingOverlay />;
 
   return (
     <NavigationContainer>
+      <LoadingOverlay isVisible={loading} />
       <StatusBar backgroundColor="black" barStyle="light-content" />
       {token === null ? <LoginStack /> : <AuthStack />}
     </NavigationContainer>
@@ -96,7 +96,9 @@ const RootNavigation = () => {
 function App() {
   return (
     <Provider store={store}>
-      <RootNavigation />
+      <LoadingOverlayContextProvider>
+        <RootNavigation />
+      </LoadingOverlayContextProvider>
     </Provider>
   );
 }
